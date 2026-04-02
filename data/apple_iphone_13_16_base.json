@@ -1,0 +1,140 @@
+[
+  { "year": 13, "variant": "", "memory": "128", "color": "Midnight" },
+  { "year": 13, "variant": "", "memory": "128", "color": "Starlight" },
+  { "year": 13, "variant": "", "memory": "128", "color": "Pink" },
+  { "year": 13, "variant": "", "memory": "128", "color": "Blue" },
+  { "year": 13, "variant": "", "memory": "128", "color": "Green" },
+
+  { "year": 13, "variant": "", "memory": "256", "color": "Midnight" },
+  { "year": 13, "variant": "", "memory": "256", "color": "Starlight" },
+  { "year": 13, "variant": "", "memory": "256", "color": "Pink" },
+  { "year": 13, "variant": "", "memory": "256", "color": "Blue" },
+  { "year": 13, "variant": "", "memory": "256", "color": "Green" },
+
+  { "year": 14, "variant": "", "memory": "128", "color": "Midnight" },
+  { "year": 14, "variant": "", "memory": "128", "color": "Starlight" },
+  { "year": 14, "variant": "", "memory": "128", "color": "Blue" },
+  { "year": 14, "variant": "", "memory": "128", "color": "Purple" },
+  { "year": 14, "variant": "", "memory": "128", "color": "Yellow" },
+
+  { "year": 14, "variant": "", "memory": "256", "color": "Midnight" },
+  { "year": 14, "variant": "", "memory": "256", "color": "Starlight" },
+  { "year": 14, "variant": "", "memory": "256", "color": "Blue" },
+  { "year": 14, "variant": "", "memory": "256", "color": "Purple" },
+  { "year": 14, "variant": "", "memory": "256", "color": "Yellow" },
+
+  { "year": 14, "variant": "Plus", "memory": "128", "color": "Midnight" },
+  { "year": 14, "variant": "Plus", "memory": "128", "color": "Starlight" },
+  { "year": 14, "variant": "Plus", "memory": "128", "color": "Blue" },
+  { "year": 14, "variant": "Plus", "memory": "128", "color": "Purple" },
+  { "year": 14, "variant": "Plus", "memory": "128", "color": "Yellow" },
+
+  { "year": 14, "variant": "Plus", "memory": "256", "color": "Midnight" },
+  { "year": 14, "variant": "Plus", "memory": "256", "color": "Starlight" },
+  { "year": 14, "variant": "Plus", "memory": "256", "color": "Blue" },
+  { "year": 14, "variant": "Plus", "memory": "256", "color": "Purple" },
+  { "year": 14, "variant": "Plus", "memory": "256", "color": "Yellow" },
+
+  { "year": 15, "variant": "", "memory": "128", "color": "Black" },
+  { "year": 15, "variant": "", "memory": "128", "color": "Pink" },
+  { "year": 15, "variant": "", "memory": "128", "color": "Blue" },
+  { "year": 15, "variant": "", "memory": "128", "color": "Green" },
+  { "year": 15, "variant": "", "memory": "128", "color": "Yellow" },
+
+  { "year": 15, "variant": "", "memory": "256", "color": "Black" },
+  { "year": 15, "variant": "", "memory": "256", "color": "Pink" },
+  { "year": 15, "variant": "", "memory": "256", "color": "Blue" },
+  { "year": 15, "variant": "", "memory": "256", "color": "Green" },
+  { "year": 15, "variant": "", "memory": "256", "color": "Yellow" },
+
+  { "year": 15, "variant": "Plus", "memory": "128", "color": "Black" },
+  { "year": 15, "variant": "Plus", "memory": "128", "color": "Pink" },
+  { "year": 15, "variant": "Plus", "memory": "128", "color": "Blue" },
+  { "year": 15, "variant": "Plus", "memory": "128", "color": "Green" },
+  { "year": 15, "variant": "Plus", "memory": "128", "color": "Yellow" },
+
+  { "year": 15, "variant": "Plus", "memory": "256", "color": "Black" },
+  { "year": 15, "variant": "Plus", "memory": "256", "color": "Pink" },
+  { "year": 15, "variant": "Plus", "memory": "256", "color": "Blue" },
+  { "year": 15, "variant": "Plus", "memory": "256", "color": "Green" },
+  { "year": 15, "variant": "Plus", "memory": "256", "color": "Yellow" },
+
+  { "year": 15, "variant": "Pro", "memory": "128", "color": "Blue" },
+  { "year": 15, "variant": "Pro", "memory": "128", "color": "White" },
+  { "year": 15, "variant": "Pro", "memory": "128", "color": "Black" },
+  { "year": 15, "variant": "Pro", "memory": "128", "color": "Natural" },
+
+  { "year": 15, "variant": "Pro", "memory": "256", "color": "Blue" },
+  { "year": 15, "variant": "Pro", "memory": "256", "color": "White" },
+  { "year": 15, "variant": "Pro", "memory": "256", "color": "Black" },
+  { "year": 15, "variant": "Pro", "memory": "256", "color": "Natural" },
+
+  { "year": 15, "variant": "Pro Max", "memory": "256", "color": "Black" },
+  { "year": 15, "variant": "Pro Max", "memory": "256", "color": "White" },
+  { "year": 15, "variant": "Pro Max", "memory": "256", "color": "Blue" },
+  { "year": 15, "variant": "Pro Max", "memory": "256", "color": "Natural" },
+
+  { "year": 15, "variant": "Pro Max", "memory": "512", "color": "White" },
+  { "year": 15, "variant": "Pro Max", "memory": "512", "color": "Blue" },
+  { "year": 15, "variant": "Pro Max", "memory": "512", "color": "Black" },
+  { "year": 15, "variant": "Pro Max", "memory": "512", "color": "Natural" },
+
+  { "year": 16, "variant": "e", "memory": "128", "color": "Black" },
+  { "year": 16, "variant": "e", "memory": "128", "color": "White" },
+
+  { "year": 16, "variant": "e", "memory": "256", "color": "Black" },
+  { "year": 16, "variant": "e", "memory": "256", "color": "White" },
+
+  { "year": 16, "variant": "e", "memory": "512", "color": "Black" },
+  { "year": 16, "variant": "e", "memory": "512", "color": "White" },
+
+  { "year": 16, "variant": "", "memory": "128", "color": "Ultramarine" },
+  { "year": 16, "variant": "", "memory": "128", "color": "Teal" },
+  { "year": 16, "variant": "", "memory": "128", "color": "Pink" },
+  { "year": 16, "variant": "", "memory": "128", "color": "Black" },
+  { "year": 16, "variant": "", "memory": "128", "color": "White" },
+
+  { "year": 16, "variant": "", "memory": "256", "color": "White" },
+  { "year": 16, "variant": "", "memory": "256", "color": "Pink" },
+  { "year": 16, "variant": "", "memory": "256", "color": "Black" },
+  { "year": 16, "variant": "", "memory": "256", "color": "Ultramarine" },
+  { "year": 16, "variant": "", "memory": "256", "color": "Teal" },
+
+  { "year": 16, "variant": "Plus", "memory": "128", "color": "White" },
+  { "year": 16, "variant": "Plus", "memory": "128", "color": "Ultramarine" },
+  { "year": 16, "variant": "Plus", "memory": "128", "color": "Black" },
+  { "year": 16, "variant": "Plus", "memory": "128", "color": "Teal" },
+  { "year": 16, "variant": "Plus", "memory": "128", "color": "Pink" },
+
+  { "year": 16, "variant": "Plus", "memory": "256", "color": "White" },
+  { "year": 16, "variant": "Plus", "memory": "256", "color": "Ultramarine" },
+  { "year": 16, "variant": "Plus", "memory": "256", "color": "Black" },
+  { "year": 16, "variant": "Plus", "memory": "256", "color": "Teal" },
+  { "year": 16, "variant": "Plus", "memory": "256", "color": "Pink" },
+
+  { "year": 16, "variant": "Pro", "memory": "128", "color": "Black" },
+  { "year": 16, "variant": "Pro", "memory": "128", "color": "White" },
+  { "year": 16, "variant": "Pro", "memory": "128", "color": "Desert" },
+  { "year": 16, "variant": "Pro", "memory": "128", "color": "Natural" },
+
+  { "year": 16, "variant": "Pro", "memory": "256", "color": "Black" },
+  { "year": 16, "variant": "Pro", "memory": "256", "color": "White" },
+  { "year": 16, "variant": "Pro", "memory": "256", "color": "Desert" },
+  { "year": 16, "variant": "Pro", "memory": "256", "color": "Natural" },
+
+  { "year": 16, "variant": "Pro Max", "memory": "256", "color": "Black" },
+  { "year": 16, "variant": "Pro Max", "memory": "256", "color": "White" },
+  { "year": 16, "variant": "Pro Max", "memory": "256", "color": "Desert" },
+  { "year": 16, "variant": "Pro Max", "memory": "256", "color": "Natural" },
+
+  { "year": 16, "variant": "Pro Max", "memory": "512", "color": "White" },
+  { "year": 16, "variant": "Pro Max", "memory": "512", "color": "Natural" },
+  { "year": 16, "variant": "Pro Max", "memory": "512", "color": "Desert" },
+  { "year": 16, "variant": "Pro Max", "memory": "512", "color": "Black" },
+
+  { "year": 16, "variant": "Pro Max", "memory": "1TB", "color": "White" },
+  { "year": 16, "variant": "Pro Max", "memory": "1TB", "color": "Natural" },
+  { "year": 16, "variant": "Pro Max", "memory": "1TB", "color": "Desert" },
+  { "year": 16, "variant": "Pro Max", "memory": "1TB", "color": "Black" }
+]
+

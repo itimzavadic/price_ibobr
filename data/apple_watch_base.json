@@ -1,0 +1,35 @@
+[
+  {"series": "SE 2", "size": "40", "color": "Midnight"},
+  {"series": "SE 2", "size": "40", "color": "Silver"},
+  {"series": "SE 2", "size": "40", "color": "Starlight"},
+  {"series": "SE 2", "size": "44", "color": "Midnight"},
+  {"series": "SE 2", "size": "44", "color": "Silver"},
+  {"series": "SE 2", "size": "44", "color": "Starlight"},
+
+  {"series": "SE 3 2025", "size": "40", "color": "Starlight"},
+  {"series": "SE 3 2025", "size": "40", "color": "Midnight"},
+  {"series": "SE 3 2025", "size": "44", "color": "Starlight"},
+  {"series": "SE 3 2025", "size": "44", "color": "Midnight"},
+
+  {"series": "S10", "size": "42", "color": "Silver"},
+  {"series": "S10", "size": "42", "color": "Rose Gold"},
+  {"series": "S10", "size": "42", "color": "Jet Black"},
+  {"series": "S10", "size": "46", "color": "Jet Black"},
+  {"series": "S10", "size": "46", "color": "Silver"},
+  {"series": "S10", "size": "46", "color": "Rose Gold"},
+
+  {"series": "S11", "size": "42", "color": "Jet Black"},
+  {"series": "S11", "size": "42", "color": "Space Gray"},
+  {"series": "S11", "size": "42", "color": "Silver"},
+  {"series": "S11", "size": "42", "color": "Rose Gold"},
+  {"series": "S11", "size": "46", "color": "Jet Black"},
+  {"series": "S11", "size": "46", "color": "Space Gray"},
+  {"series": "S11", "size": "46", "color": "Silver"},
+  {"series": "S11", "size": "46", "color": "Rose Gold"},
+
+  {"series": "Ultra 2 2024", "size": "", "color": "Natural Titanium"},
+  {"series": "Ultra 2 2024", "size": "", "color": "Black Titanium"},
+
+  {"series": "Ultra 3 2025", "size": "", "color": "Black Titanium"},
+  {"series": "Ultra 3 2025", "size": "", "color": "Natural Titanium"}
+]
