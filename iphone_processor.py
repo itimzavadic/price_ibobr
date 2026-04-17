@@ -31,6 +31,36 @@ def _normalize_text(s: str) -> str:
     return s.strip()
 
 
+def wholesale_line_skips_iphone_13_16_parsing(name_raw: str) -> bool:
+    """Планшеты / AirPods / MacBook в опте не разбирать как iPhone 13–16."""
+    lowered = _normalize_text(name_raw).lower()
+    if re.search(r"\bipad\b", lowered):
+        return True
+    if re.search(r"\bair\s+(11|13)\s+m\d+", lowered):
+        return True
+    if re.search(r"\bpro\s+(11|12|13)\s+m\d+\b", lowered):
+        return True
+    if re.search(r"\bair\s*pods?\b", lowered):
+        return True
+    if "\U0001f3a7" in name_raw:
+        return True
+    if re.search(r"\bmacbook\b", lowered):
+        return True
+    return False
+
+
+def wholesale_line_skips_all_iphone_row_processing(name_raw: str) -> bool:
+    """Строка относится к другой категории — не гонять через парсеры iPhone (17 / Air / 13–16)."""
+    lowered = _normalize_text(name_raw).lower()
+    if re.search(r"\bair\s*pods?\b", lowered):
+        return True
+    if "\U0001f3a7" in name_raw:
+        return True
+    if re.search(r"\bmacbook\b", lowered):
+        return True
+    return False
+
+
 def _is_blocked_country_flags(s: str) -> bool:
     lowered = s.lower()
 
@@ -215,11 +245,8 @@ def _format_telegram_line_13_16(
     return f"{model} - **{missing_price_text}**"
 
 
-def _parse_price_usd(value: str) -> Decimal:
-    """
-    Парсит USD-цену из строки.
-    Если цена не числовая (например, "нету"), возвращает исключение.
-    """
+def _parse_price_usd_single(value: str) -> Decimal:
+    """Одна числовая цена USD (фрагмент без слэша между двумя оптами)."""
     v = value.strip()
     if not v:
         raise ValueError("empty")
@@ -228,16 +255,39 @@ def _parse_price_usd(value: str) -> Decimal:
         raise ValueError("missing")
 
     v = v.replace("$", "").replace("USD", "").strip()
-    # Keep digits and separators.
     v = re.sub(r"[^0-9.,]", "", v)
     if not v:
         raise ValueError("no digits")
-    # If both comma and dot exist, assume comma is thousands separator.
     if "," in v and "." in v:
         v = v.replace(",", "")
-    # Convert comma decimal to dot.
     v = v.replace(",", ".")
     return Decimal(v)
+
+
+def _parse_price_usd(value: str) -> Decimal:
+    """
+    Парсит USD-цену из строки.
+    Две и более цены через «/» (например 680/685 за 🇮🇳/🇪🇺) — берётся минимум.
+    Если цена не числовая (например, "нету"), возвращает исключение.
+    """
+    raw = value.strip()
+    if not raw:
+        raise ValueError("empty")
+
+    if "/" in raw:
+        parts = [p.strip() for p in raw.split("/") if p.strip()]
+        parsed: list[Decimal] = []
+        for p in parts:
+            try:
+                parsed.append(_parse_price_usd_single(p))
+            except ValueError:
+                continue
+        if len(parsed) >= 2:
+            return min(parsed)
+        if len(parsed) == 1:
+            return parsed[0]
+
+    return _parse_price_usd_single(raw)
 
 
 def _try_parse_price_usd(value: str) -> Optional[Decimal]:
@@ -245,6 +295,24 @@ def _try_parse_price_usd(value: str) -> Optional[Decimal]:
         return _parse_price_usd(value)
     except Exception:
         return None
+
+
+def _try_parse_price_byn(value: str) -> Optional[int]:
+    """Розничная цена в BYN из ячейки прайса (цифры, пробелы-разделители, суффикс BYN, ** из Telegram)."""
+    s = value.strip()
+    if not s:
+        return None
+    s = re.sub(r"\*+", "", s)
+    low = s.lower()
+    for word in ("byn", "брн", "руб", "brn"):
+        low = low.replace(word, "")
+    digits = re.sub(r"\D", "", low)
+    if not digits:
+        return None
+    n = int(digits)
+    if n <= 0:
+        return None
+    return n
 
 
 def round_to_tens(byn: Decimal) -> int:
@@ -465,6 +533,8 @@ def process_iphone_13_16_block(
 
     for name_raw, price_usd_raw in input_rows:
         if _is_blocked_country_flags(name_raw):
+            continue
+        if wholesale_line_skips_iphone_13_16_parsing(name_raw):
             continue
 
         key = _extract_year_variant_memory_color(name_raw)
