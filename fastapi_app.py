@@ -94,8 +94,14 @@ class MixedRetailRequest(BaseModel):
     usd_to_byn: Decimal
     markup_usd_iphone: Decimal
     markup_usd_watch: Decimal
-    markup_usd_ipad: Decimal
-    markup_usd_airpods: Decimal
+    markup_usd_ipad: Decimal = Field(
+        default=Decimal("75"),
+        description="Наценка iPad, USD (смешанный прайс; по умолчанию если не передано с фронта).",
+    )
+    markup_usd_airpods: Decimal = Field(
+        default=Decimal("45"),
+        description="Наценка AirPods, USD (смешанный прайс).",
+    )
     markup_usd_macbook: Decimal = Field(
         default=Decimal("110"), description="Наценка MacBook, USD (для смешанного прайса)."
     )

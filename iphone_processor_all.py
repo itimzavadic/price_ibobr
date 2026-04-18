@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Iterable, Iterator, Optional
 
 import iphone_processor as base_proc
+from price_merge import merge_min_byn
 
 from block_rules import BLOCK_DASH_LINE
 
@@ -86,6 +87,42 @@ def _format_model_line(key: DeviceKey, *, show_13_16_sim_labels: bool = False) -
     else:
         core = f"{key.year} {key.variant} {key.memory} {key.color}{sim_tail}"
     return f"{IPHONE_ICON}{core}"
+
+
+def _format_retail_site_model_line(key: DeviceKey) -> str:
+    """Строка для сайта: iPhone 17 или Air — без типа SIM в названии."""
+    if key.family == "air":
+        return f"{IPHONE_ICON}Air {key.memory} {key.color}"
+    if key.family == "iphone" and key.year == 17:
+        if key.variant == "":
+            core = f"{key.year} {key.memory} {key.color}"
+        elif key.variant == "e":
+            core = f"{key.year}e {key.memory} {key.color}"
+        elif key.variant == "Plus":
+            core = f"{key.year} Plus {key.memory} {key.color}"
+        elif key.variant == "Pro Max":
+            core = f"{key.year} Pro Max {key.memory} {key.color}"
+        elif key.variant == "Pro":
+            core = f"{key.year} Pro {key.memory} {key.color}"
+        else:
+            core = f"{key.year} {key.variant} {key.memory} {key.color}"
+        return f"{IPHONE_ICON}{core}"
+    raise ValueError("ожидается iPhone 17 или iPhone Air")
+
+
+def _format_retail_site_price_line(key: DeviceKey, *, price_byn: int) -> str:
+    """Одна строка списка для сайта: модель без SIM — цена BYN (как в Telegram-разметке)."""
+    model = _format_retail_site_model_line(key)
+    return f"{model} - **{price_byn} BYN**"
+
+
+def _retail_site_sort_key(key: DeviceKey) -> tuple:
+    """Сначала линейка 17 (17e → 17 → Pro → Pro Max), затем Air; внутри — память → цвет."""
+    if key.family == "air":
+        return (1, 0, _memory_rank(key.memory), key.color.lower())
+    if key.family == "iphone" and key.year == 17:
+        return (0, _variant_rank_device(key), _memory_rank(key.memory), key.color.lower())
+    raise ValueError("ожидается iPhone 17 или iPhone Air")
 
 
 def _format_telegram_line(
@@ -427,18 +464,15 @@ def load_all_iphone_base(
     return base_order, base_map
 
 
-def process_iphone_all_from_text(
+def collect_iphone_all_best_byn_from_text(
     input_text: str,
     *,
     input_format: str,
-    base_order: list[DeviceKey],
     base: dict[DeviceKey, dict],
     usd_to_byn: Decimal,
     markup_usd: Decimal,
-    missing_price_text: str = "по запросу",
-    delimiter_out: str = ";",
     include_cn_us_13_16: bool = False,
-) -> str:
+) -> tuple[dict[DeviceKey, int], set[DeviceKey]]:
     best_numeric: dict[DeviceKey, int] = {}
     has_numeric: set[DeviceKey] = set()
 
@@ -522,6 +556,18 @@ def process_iphone_all_from_text(
                 continue
             _update_best_price(best_numeric, has_numeric, core_key, price_byn)
 
+    return best_numeric, has_numeric
+
+
+def format_iphone_all_to_csv(
+    best_numeric: dict[DeviceKey, int],
+    has_numeric: set[DeviceKey],
+    *,
+    base_order: list[DeviceKey],
+    missing_price_text: str = "по запросу",
+    delimiter_out: str = ";",
+    include_cn_us_13_16: bool = False,
+) -> str:
     pairs: list[tuple[DeviceKey, str]] = []
     for key in base_order:
         if key.family == "iphone" and 13 <= key.year <= 16 and include_cn_us_13_16:
@@ -618,6 +664,151 @@ def process_iphone_all_from_text(
         pairs.append((key, line))
 
     pairs.sort(key=lambda p: _retail_sort_key(p[0]))
+    lines = _inject_retail_separators(pairs)
+    rows: list[str] = []
+    for L in lines:
+        if L == "":
+            rows.append("")
+        else:
+            rows.append(_csv_one_cell_row(L, delimiter_out))
+    return "\n".join(rows) + ("\n" if rows else "")
+
+
+def process_iphone_all_from_text(
+    input_text: str,
+    *,
+    input_format: str,
+    base_order: list[DeviceKey],
+    base: dict[DeviceKey, dict],
+    usd_to_byn: Decimal,
+    markup_usd: Decimal,
+    missing_price_text: str = "по запросу",
+    delimiter_out: str = ";",
+    include_cn_us_13_16: bool = False,
+) -> str:
+    best_numeric, has_numeric = collect_iphone_all_best_byn_from_text(
+        input_text,
+        input_format=input_format,
+        base=base,
+        usd_to_byn=usd_to_byn,
+        markup_usd=markup_usd,
+        include_cn_us_13_16=include_cn_us_13_16,
+    )
+    return format_iphone_all_to_csv(
+        best_numeric,
+        has_numeric,
+        base_order=base_order,
+        missing_price_text=missing_price_text,
+        delimiter_out=delimiter_out,
+        include_cn_us_13_16=include_cn_us_13_16,
+    )
+
+
+def merge_iphone_all_from_texts(
+    raw_a: str,
+    raw_b: str,
+    *,
+    input_format: str,
+    base_order: list[DeviceKey],
+    base: dict[DeviceKey, dict],
+    usd_to_byn: Decimal,
+    markup_usd_a: Decimal,
+    markup_usd_b: Decimal,
+    missing_price_text: str = "по запросу",
+    delimiter_out: str = ";",
+    include_cn_us_13_16: bool = False,
+) -> str:
+    ba, _ = collect_iphone_all_best_byn_from_text(
+        raw_a,
+        input_format=input_format,
+        base=base,
+        usd_to_byn=usd_to_byn,
+        markup_usd=markup_usd_a,
+        include_cn_us_13_16=include_cn_us_13_16,
+    )
+    bb, _ = collect_iphone_all_best_byn_from_text(
+        raw_b,
+        input_format=input_format,
+        base=base,
+        usd_to_byn=usd_to_byn,
+        markup_usd=markup_usd_b,
+        include_cn_us_13_16=include_cn_us_13_16,
+    )
+    merged = merge_min_byn(ba, bb)
+    return format_iphone_all_to_csv(
+        merged,
+        set(merged.keys()),
+        base_order=base_order,
+        missing_price_text=missing_price_text,
+        delimiter_out=delimiter_out,
+        include_cn_us_13_16=include_cn_us_13_16,
+    )
+
+
+def collect_retail_site_min_by_group(
+    input_text: str,
+    *,
+    input_format: str,
+    base: dict[DeviceKey, dict],
+) -> dict[tuple, tuple[int, DeviceKey]]:
+    """Розничный прайс (BYN): iPhone 17 и iPhone Air. Группа — минимальная BYN среди вариантов SIM.
+
+    Ключ группы: (\"17\", variant, memory, color) или (\"air\", memory, color).
+    """
+    best: dict[tuple, tuple[int, DeviceKey]] = {}
+
+    rows = base_proc._iter_input_rows_from_string(input_text, input_format=input_format)
+
+    for name_raw, price_raw in rows:
+        if price_raw is None:
+            continue
+        if base_proc.wholesale_line_skips_all_iphone_row_processing(name_raw):
+            continue
+        price_byn = base_proc._try_parse_price_byn(price_raw)
+        if price_byn is None:
+            continue
+
+        k = _extract_iphone17_key(name_raw)
+        if k is not None and k in base:
+            g: tuple = ("17", k.variant, k.memory, k.color)
+        else:
+            ka = _extract_air_key(name_raw)
+            if ka is None or ka not in base:
+                continue
+            k = ka
+            g = ("air", k.memory, k.color)
+
+        prev = best.get(g)
+        if prev is None or price_byn < prev[0]:
+            best[g] = (price_byn, k)
+
+    return best
+
+
+def process_iphone17_site_from_text(
+    input_text: str,
+    *,
+    input_format: str,
+    base: dict[DeviceKey, dict],
+    delimiter_out: str = ";",
+) -> str:
+    """Список для сайта: розничные BYN без пересчёта; min на память+цвет внутри линейки; iPhone 17 + Air; без SIM в названии."""
+    groups = collect_retail_site_min_by_group(
+        input_text,
+        input_format=input_format,
+        base=base,
+    )
+    if not groups:
+        return ""
+
+    winners: list[tuple[DeviceKey, int]] = []
+    for _g, (price_byn, key) in groups.items():
+        winners.append((key, price_byn))
+    winners.sort(key=lambda t: _retail_site_sort_key(t[0]))
+
+    pairs: list[tuple[DeviceKey, str]] = [
+        (key, _format_retail_site_price_line(key, price_byn=price_byn)) for key, price_byn in winners
+    ]
     lines = _inject_retail_separators(pairs)
     rows: list[str] = []
     for L in lines:
