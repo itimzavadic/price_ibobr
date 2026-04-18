@@ -1,134 +1,818 @@
 [
-  { "family": "iphone", "year": 17, "variant": "", "memory": "256", "color": "Black", "sim_variant": "eSim" },
-  { "family": "iphone", "year": 17, "variant": "", "memory": "256", "color": "Black", "sim_variant": "dual" },
-  { "family": "iphone", "year": 17, "variant": "", "memory": "256", "color": "Black", "sim_variant": "1+1" },
-
-  { "family": "iphone", "year": 17, "variant": "", "memory": "256", "color": "Blue", "sim_variant": "eSim" },
-  { "family": "iphone", "year": 17, "variant": "", "memory": "256", "color": "Blue", "sim_variant": "dual" },
-  { "family": "iphone", "year": 17, "variant": "", "memory": "256", "color": "Blue", "sim_variant": "1+1" },
-
-  { "family": "iphone", "year": 17, "variant": "", "memory": "256", "color": "Lavender", "sim_variant": "eSim" },
-  { "family": "iphone", "year": 17, "variant": "", "memory": "256", "color": "Lavender", "sim_variant": "dual" },
-  { "family": "iphone", "year": 17, "variant": "", "memory": "256", "color": "Lavender", "sim_variant": "1+1" },
-
-  { "family": "iphone", "year": 17, "variant": "", "memory": "256", "color": "Sage", "sim_variant": "eSim" },
-  { "family": "iphone", "year": 17, "variant": "", "memory": "256", "color": "Sage", "sim_variant": "dual" },
-  { "family": "iphone", "year": 17, "variant": "", "memory": "256", "color": "Sage", "sim_variant": "1+1" },
-
-  { "family": "iphone", "year": 17, "variant": "", "memory": "256", "color": "White", "sim_variant": "eSim" },
-  { "family": "iphone", "year": 17, "variant": "", "memory": "256", "color": "White", "sim_variant": "dual" },
-  { "family": "iphone", "year": 17, "variant": "", "memory": "256", "color": "White", "sim_variant": "1+1" },
-
-  { "family": "iphone", "year": 17, "variant": "", "memory": "512", "color": "Black", "sim_variant": "eSim" },
-  { "family": "iphone", "year": 17, "variant": "", "memory": "512", "color": "Black", "sim_variant": "dual" },
-  { "family": "iphone", "year": 17, "variant": "", "memory": "512", "color": "Black", "sim_variant": "1+1" },
-
-  { "family": "iphone", "year": 17, "variant": "", "memory": "512", "color": "Blue", "sim_variant": "eSim" },
-  { "family": "iphone", "year": 17, "variant": "", "memory": "512", "color": "Blue", "sim_variant": "dual" },
-  { "family": "iphone", "year": 17, "variant": "", "memory": "512", "color": "Blue", "sim_variant": "1+1" },
-
-  { "family": "iphone", "year": 17, "variant": "", "memory": "512", "color": "Sage", "sim_variant": "eSim" },
-  { "family": "iphone", "year": 17, "variant": "", "memory": "512", "color": "Sage", "sim_variant": "dual" },
-  { "family": "iphone", "year": 17, "variant": "", "memory": "512", "color": "Sage", "sim_variant": "1+1" },
-
-  { "family": "iphone", "year": 17, "variant": "", "memory": "512", "color": "White", "sim_variant": "eSim" },
-  { "family": "iphone", "year": 17, "variant": "", "memory": "512", "color": "White", "sim_variant": "dual" },
-  { "family": "iphone", "year": 17, "variant": "", "memory": "512", "color": "White", "sim_variant": "1+1" },
-
-  { "family": "iphone", "year": 17, "variant": "", "memory": "512", "color": "Lavender", "sim_variant": "eSim" },
-  { "family": "iphone", "year": 17, "variant": "", "memory": "512", "color": "Lavender", "sim_variant": "dual" },
-  { "family": "iphone", "year": 17, "variant": "", "memory": "512", "color": "Lavender", "sim_variant": "1+1" },
-
-  { "family": "iphone", "year": 17, "variant": "Pro", "memory": "256", "color": "Blue", "sim_variant": "eSim" },
-  { "family": "iphone", "year": 17, "variant": "Pro", "memory": "256", "color": "Blue", "sim_variant": "dual" },
-  { "family": "iphone", "year": 17, "variant": "Pro", "memory": "256", "color": "Blue", "sim_variant": "1+1" },
-
-  { "family": "iphone", "year": 17, "variant": "Pro", "memory": "256", "color": "Orange", "sim_variant": "eSim" },
-  { "family": "iphone", "year": 17, "variant": "Pro", "memory": "256", "color": "Orange", "sim_variant": "dual" },
-  { "family": "iphone", "year": 17, "variant": "Pro", "memory": "256", "color": "Orange", "sim_variant": "1+1" },
-
-  { "family": "iphone", "year": 17, "variant": "Pro", "memory": "256", "color": "Silver", "sim_variant": "eSim" },
-  { "family": "iphone", "year": 17, "variant": "Pro", "memory": "256", "color": "Silver", "sim_variant": "dual" },
-  { "family": "iphone", "year": 17, "variant": "Pro", "memory": "256", "color": "Silver", "sim_variant": "1+1" },
-
-  { "family": "iphone", "year": 17, "variant": "Pro", "memory": "512", "color": "Blue", "sim_variant": "eSim" },
-  { "family": "iphone", "year": 17, "variant": "Pro", "memory": "512", "color": "Blue", "sim_variant": "dual" },
-  { "family": "iphone", "year": 17, "variant": "Pro", "memory": "512", "color": "Blue", "sim_variant": "1+1" },
-
-  { "family": "iphone", "year": 17, "variant": "Pro", "memory": "512", "color": "Orange", "sim_variant": "eSim" },
-  { "family": "iphone", "year": 17, "variant": "Pro", "memory": "512", "color": "Orange", "sim_variant": "dual" },
-  { "family": "iphone", "year": 17, "variant": "Pro", "memory": "512", "color": "Orange", "sim_variant": "1+1" },
-
-  { "family": "iphone", "year": 17, "variant": "Pro", "memory": "512", "color": "Silver", "sim_variant": "eSim" },
-  { "family": "iphone", "year": 17, "variant": "Pro", "memory": "512", "color": "Silver", "sim_variant": "dual" },
-  { "family": "iphone", "year": 17, "variant": "Pro", "memory": "512", "color": "Silver", "sim_variant": "1+1" },
-
-  { "family": "iphone", "year": 17, "variant": "Pro", "memory": "1TB", "color": "Blue", "sim_variant": "eSim" },
-  { "family": "iphone", "year": 17, "variant": "Pro", "memory": "1TB", "color": "Blue", "sim_variant": "dual" },
-  { "family": "iphone", "year": 17, "variant": "Pro", "memory": "1TB", "color": "Blue", "sim_variant": "1+1" },
-
-  { "family": "iphone", "year": 17, "variant": "Pro", "memory": "1TB", "color": "Orange", "sim_variant": "eSim" },
-  { "family": "iphone", "year": 17, "variant": "Pro", "memory": "1TB", "color": "Orange", "sim_variant": "dual" },
-  { "family": "iphone", "year": 17, "variant": "Pro", "memory": "1TB", "color": "Orange", "sim_variant": "1+1" },
-
-  { "family": "iphone", "year": 17, "variant": "Pro", "memory": "1TB", "color": "Silver", "sim_variant": "eSim" },
-  { "family": "iphone", "year": 17, "variant": "Pro", "memory": "1TB", "color": "Silver", "sim_variant": "dual" },
-  { "family": "iphone", "year": 17, "variant": "Pro", "memory": "1TB", "color": "Silver", "sim_variant": "1+1" },
-
-  { "family": "iphone", "year": 17, "variant": "Pro Max", "memory": "256", "color": "Blue", "sim_variant": "eSim" },
-  { "family": "iphone", "year": 17, "variant": "Pro Max", "memory": "256", "color": "Blue", "sim_variant": "dual" },
-  { "family": "iphone", "year": 17, "variant": "Pro Max", "memory": "256", "color": "Blue", "sim_variant": "1+1" },
-
-  { "family": "iphone", "year": 17, "variant": "Pro Max", "memory": "256", "color": "Orange", "sim_variant": "eSim" },
-  { "family": "iphone", "year": 17, "variant": "Pro Max", "memory": "256", "color": "Orange", "sim_variant": "dual" },
-  { "family": "iphone", "year": 17, "variant": "Pro Max", "memory": "256", "color": "Orange", "sim_variant": "1+1" },
-
-  { "family": "iphone", "year": 17, "variant": "Pro Max", "memory": "256", "color": "Silver", "sim_variant": "eSim" },
-  { "family": "iphone", "year": 17, "variant": "Pro Max", "memory": "256", "color": "Silver", "sim_variant": "dual" },
-  { "family": "iphone", "year": 17, "variant": "Pro Max", "memory": "256", "color": "Silver", "sim_variant": "1+1" },
-
-  { "family": "iphone", "year": 17, "variant": "Pro Max", "memory": "512", "color": "Blue", "sim_variant": "eSim" },
-  { "family": "iphone", "year": 17, "variant": "Pro Max", "memory": "512", "color": "Blue", "sim_variant": "dual" },
-  { "family": "iphone", "year": 17, "variant": "Pro Max", "memory": "512", "color": "Blue", "sim_variant": "1+1" },
-
-  { "family": "iphone", "year": 17, "variant": "Pro Max", "memory": "512", "color": "Orange", "sim_variant": "eSim" },
-  { "family": "iphone", "year": 17, "variant": "Pro Max", "memory": "512", "color": "Orange", "sim_variant": "dual" },
-  { "family": "iphone", "year": 17, "variant": "Pro Max", "memory": "512", "color": "Orange", "sim_variant": "1+1" },
-
-  { "family": "iphone", "year": 17, "variant": "Pro Max", "memory": "512", "color": "Silver", "sim_variant": "eSim" },
-  { "family": "iphone", "year": 17, "variant": "Pro Max", "memory": "512", "color": "Silver", "sim_variant": "dual" },
-  { "family": "iphone", "year": 17, "variant": "Pro Max", "memory": "512", "color": "Silver", "sim_variant": "1+1" },
-
-  { "family": "iphone", "year": 17, "variant": "Pro Max", "memory": "1TB", "color": "Blue", "sim_variant": "eSim" },
-  { "family": "iphone", "year": 17, "variant": "Pro Max", "memory": "1TB", "color": "Blue", "sim_variant": "dual" },
-  { "family": "iphone", "year": 17, "variant": "Pro Max", "memory": "1TB", "color": "Blue", "sim_variant": "1+1" },
-
-  { "family": "iphone", "year": 17, "variant": "Pro Max", "memory": "1TB", "color": "Orange", "sim_variant": "eSim" },
-  { "family": "iphone", "year": 17, "variant": "Pro Max", "memory": "1TB", "color": "Orange", "sim_variant": "dual" },
-  { "family": "iphone", "year": 17, "variant": "Pro Max", "memory": "1TB", "color": "Orange", "sim_variant": "1+1" },
-
-  { "family": "iphone", "year": 17, "variant": "Pro Max", "memory": "1TB", "color": "Silver", "sim_variant": "eSim" },
-  { "family": "iphone", "year": 17, "variant": "Pro Max", "memory": "1TB", "color": "Silver", "sim_variant": "dual" },
-  { "family": "iphone", "year": 17, "variant": "Pro Max", "memory": "1TB", "color": "Silver", "sim_variant": "1+1" },
-
-  { "family": "iphone", "year": 17, "variant": "e", "memory": "256", "color": "White", "sim_variant": "eSim" },
-  { "family": "iphone", "year": 17, "variant": "e", "memory": "256", "color": "White", "sim_variant": "dual" },
-  { "family": "iphone", "year": 17, "variant": "e", "memory": "256", "color": "White", "sim_variant": "1+1" },
-  { "family": "iphone", "year": 17, "variant": "e", "memory": "256", "color": "Black", "sim_variant": "eSim" },
-  { "family": "iphone", "year": 17, "variant": "e", "memory": "256", "color": "Black", "sim_variant": "dual" },
-  { "family": "iphone", "year": 17, "variant": "e", "memory": "256", "color": "Black", "sim_variant": "1+1" },
-  { "family": "iphone", "year": 17, "variant": "e", "memory": "256", "color": "Pink", "sim_variant": "eSim" },
-  { "family": "iphone", "year": 17, "variant": "e", "memory": "256", "color": "Pink", "sim_variant": "dual" },
-  { "family": "iphone", "year": 17, "variant": "e", "memory": "256", "color": "Pink", "sim_variant": "1+1" },
-
-  { "family": "iphone", "year": 17, "variant": "e", "memory": "512", "color": "White", "sim_variant": "eSim" },
-  { "family": "iphone", "year": 17, "variant": "e", "memory": "512", "color": "White", "sim_variant": "dual" },
-  { "family": "iphone", "year": 17, "variant": "e", "memory": "512", "color": "White", "sim_variant": "1+1" },
-  { "family": "iphone", "year": 17, "variant": "e", "memory": "512", "color": "Black", "sim_variant": "eSim" },
-  { "family": "iphone", "year": 17, "variant": "e", "memory": "512", "color": "Black", "sim_variant": "dual" },
-  { "family": "iphone", "year": 17, "variant": "e", "memory": "512", "color": "Black", "sim_variant": "1+1" },
-  { "family": "iphone", "year": 17, "variant": "e", "memory": "512", "color": "Pink", "sim_variant": "eSim" },
-  { "family": "iphone", "year": 17, "variant": "e", "memory": "512", "color": "Pink", "sim_variant": "dual" },
-  { "family": "iphone", "year": 17, "variant": "e", "memory": "512", "color": "Pink", "sim_variant": "1+1" }
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "",
+    "memory": "256",
+    "color": "Black",
+    "sim_variant": "(eSim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "",
+    "memory": "256",
+    "color": "Black",
+    "sim_variant": "(dual)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "",
+    "memory": "256",
+    "color": "Black",
+    "sim_variant": "(sim+esim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "",
+    "memory": "256",
+    "color": "Blue",
+    "sim_variant": "(eSim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "",
+    "memory": "256",
+    "color": "Blue",
+    "sim_variant": "(dual)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "",
+    "memory": "256",
+    "color": "Blue",
+    "sim_variant": "(sim+esim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "",
+    "memory": "256",
+    "color": "Lavender",
+    "sim_variant": "(eSim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "",
+    "memory": "256",
+    "color": "Lavender",
+    "sim_variant": "(dual)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "",
+    "memory": "256",
+    "color": "Lavender",
+    "sim_variant": "(sim+esim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "",
+    "memory": "256",
+    "color": "Sage",
+    "sim_variant": "(eSim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "",
+    "memory": "256",
+    "color": "Sage",
+    "sim_variant": "(dual)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "",
+    "memory": "256",
+    "color": "Sage",
+    "sim_variant": "(sim+esim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "",
+    "memory": "256",
+    "color": "White",
+    "sim_variant": "(eSim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "",
+    "memory": "256",
+    "color": "White",
+    "sim_variant": "(dual)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "",
+    "memory": "256",
+    "color": "White",
+    "sim_variant": "(sim+esim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "",
+    "memory": "512",
+    "color": "Black",
+    "sim_variant": "(eSim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "",
+    "memory": "512",
+    "color": "Black",
+    "sim_variant": "(dual)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "",
+    "memory": "512",
+    "color": "Black",
+    "sim_variant": "(sim+esim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "",
+    "memory": "512",
+    "color": "Blue",
+    "sim_variant": "(eSim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "",
+    "memory": "512",
+    "color": "Blue",
+    "sim_variant": "(dual)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "",
+    "memory": "512",
+    "color": "Blue",
+    "sim_variant": "(sim+esim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "",
+    "memory": "512",
+    "color": "Sage",
+    "sim_variant": "(eSim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "",
+    "memory": "512",
+    "color": "Sage",
+    "sim_variant": "(dual)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "",
+    "memory": "512",
+    "color": "Sage",
+    "sim_variant": "(sim+esim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "",
+    "memory": "512",
+    "color": "White",
+    "sim_variant": "(eSim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "",
+    "memory": "512",
+    "color": "White",
+    "sim_variant": "(dual)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "",
+    "memory": "512",
+    "color": "White",
+    "sim_variant": "(sim+esim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "",
+    "memory": "512",
+    "color": "Lavender",
+    "sim_variant": "(eSim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "",
+    "memory": "512",
+    "color": "Lavender",
+    "sim_variant": "(dual)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "",
+    "memory": "512",
+    "color": "Lavender",
+    "sim_variant": "(sim+esim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "Pro",
+    "memory": "256",
+    "color": "Blue",
+    "sim_variant": "(eSim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "Pro",
+    "memory": "256",
+    "color": "Blue",
+    "sim_variant": "(dual)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "Pro",
+    "memory": "256",
+    "color": "Blue",
+    "sim_variant": "(sim+esim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "Pro",
+    "memory": "256",
+    "color": "Orange",
+    "sim_variant": "(eSim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "Pro",
+    "memory": "256",
+    "color": "Orange",
+    "sim_variant": "(dual)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "Pro",
+    "memory": "256",
+    "color": "Orange",
+    "sim_variant": "(sim+esim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "Pro",
+    "memory": "256",
+    "color": "Silver",
+    "sim_variant": "(eSim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "Pro",
+    "memory": "256",
+    "color": "Silver",
+    "sim_variant": "(dual)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "Pro",
+    "memory": "256",
+    "color": "Silver",
+    "sim_variant": "(sim+esim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "Pro",
+    "memory": "512",
+    "color": "Blue",
+    "sim_variant": "(eSim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "Pro",
+    "memory": "512",
+    "color": "Blue",
+    "sim_variant": "(dual)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "Pro",
+    "memory": "512",
+    "color": "Blue",
+    "sim_variant": "(sim+esim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "Pro",
+    "memory": "512",
+    "color": "Orange",
+    "sim_variant": "(eSim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "Pro",
+    "memory": "512",
+    "color": "Orange",
+    "sim_variant": "(dual)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "Pro",
+    "memory": "512",
+    "color": "Orange",
+    "sim_variant": "(sim+esim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "Pro",
+    "memory": "512",
+    "color": "Silver",
+    "sim_variant": "(eSim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "Pro",
+    "memory": "512",
+    "color": "Silver",
+    "sim_variant": "(dual)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "Pro",
+    "memory": "512",
+    "color": "Silver",
+    "sim_variant": "(sim+esim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "Pro",
+    "memory": "1TB",
+    "color": "Blue",
+    "sim_variant": "(eSim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "Pro",
+    "memory": "1TB",
+    "color": "Blue",
+    "sim_variant": "(dual)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "Pro",
+    "memory": "1TB",
+    "color": "Blue",
+    "sim_variant": "(sim+esim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "Pro",
+    "memory": "1TB",
+    "color": "Orange",
+    "sim_variant": "(eSim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "Pro",
+    "memory": "1TB",
+    "color": "Orange",
+    "sim_variant": "(dual)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "Pro",
+    "memory": "1TB",
+    "color": "Orange",
+    "sim_variant": "(sim+esim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "Pro",
+    "memory": "1TB",
+    "color": "Silver",
+    "sim_variant": "(eSim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "Pro",
+    "memory": "1TB",
+    "color": "Silver",
+    "sim_variant": "(dual)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "Pro",
+    "memory": "1TB",
+    "color": "Silver",
+    "sim_variant": "(sim+esim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "Pro Max",
+    "memory": "256",
+    "color": "Blue",
+    "sim_variant": "(eSim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "Pro Max",
+    "memory": "256",
+    "color": "Blue",
+    "sim_variant": "(dual)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "Pro Max",
+    "memory": "256",
+    "color": "Blue",
+    "sim_variant": "(sim+esim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "Pro Max",
+    "memory": "256",
+    "color": "Orange",
+    "sim_variant": "(eSim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "Pro Max",
+    "memory": "256",
+    "color": "Orange",
+    "sim_variant": "(dual)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "Pro Max",
+    "memory": "256",
+    "color": "Orange",
+    "sim_variant": "(sim+esim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "Pro Max",
+    "memory": "256",
+    "color": "Silver",
+    "sim_variant": "(eSim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "Pro Max",
+    "memory": "256",
+    "color": "Silver",
+    "sim_variant": "(dual)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "Pro Max",
+    "memory": "256",
+    "color": "Silver",
+    "sim_variant": "(sim+esim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "Pro Max",
+    "memory": "512",
+    "color": "Blue",
+    "sim_variant": "(eSim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "Pro Max",
+    "memory": "512",
+    "color": "Blue",
+    "sim_variant": "(dual)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "Pro Max",
+    "memory": "512",
+    "color": "Blue",
+    "sim_variant": "(sim+esim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "Pro Max",
+    "memory": "512",
+    "color": "Orange",
+    "sim_variant": "(eSim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "Pro Max",
+    "memory": "512",
+    "color": "Orange",
+    "sim_variant": "(dual)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "Pro Max",
+    "memory": "512",
+    "color": "Orange",
+    "sim_variant": "(sim+esim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "Pro Max",
+    "memory": "512",
+    "color": "Silver",
+    "sim_variant": "(eSim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "Pro Max",
+    "memory": "512",
+    "color": "Silver",
+    "sim_variant": "(dual)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "Pro Max",
+    "memory": "512",
+    "color": "Silver",
+    "sim_variant": "(sim+esim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "Pro Max",
+    "memory": "1TB",
+    "color": "Blue",
+    "sim_variant": "(eSim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "Pro Max",
+    "memory": "1TB",
+    "color": "Blue",
+    "sim_variant": "(dual)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "Pro Max",
+    "memory": "1TB",
+    "color": "Blue",
+    "sim_variant": "(sim+esim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "Pro Max",
+    "memory": "1TB",
+    "color": "Orange",
+    "sim_variant": "(eSim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "Pro Max",
+    "memory": "1TB",
+    "color": "Orange",
+    "sim_variant": "(dual)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "Pro Max",
+    "memory": "1TB",
+    "color": "Orange",
+    "sim_variant": "(sim+esim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "Pro Max",
+    "memory": "1TB",
+    "color": "Silver",
+    "sim_variant": "(eSim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "Pro Max",
+    "memory": "1TB",
+    "color": "Silver",
+    "sim_variant": "(dual)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "Pro Max",
+    "memory": "1TB",
+    "color": "Silver",
+    "sim_variant": "(sim+esim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "e",
+    "memory": "256",
+    "color": "White",
+    "sim_variant": "(eSim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "e",
+    "memory": "256",
+    "color": "White",
+    "sim_variant": "(dual)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "e",
+    "memory": "256",
+    "color": "White",
+    "sim_variant": "(sim+esim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "e",
+    "memory": "256",
+    "color": "Black",
+    "sim_variant": "(eSim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "e",
+    "memory": "256",
+    "color": "Black",
+    "sim_variant": "(dual)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "e",
+    "memory": "256",
+    "color": "Black",
+    "sim_variant": "(sim+esim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "e",
+    "memory": "256",
+    "color": "Pink",
+    "sim_variant": "(eSim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "e",
+    "memory": "256",
+    "color": "Pink",
+    "sim_variant": "(dual)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "e",
+    "memory": "256",
+    "color": "Pink",
+    "sim_variant": "(sim+esim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "e",
+    "memory": "512",
+    "color": "White",
+    "sim_variant": "(eSim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "e",
+    "memory": "512",
+    "color": "White",
+    "sim_variant": "(dual)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "e",
+    "memory": "512",
+    "color": "White",
+    "sim_variant": "(sim+esim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "e",
+    "memory": "512",
+    "color": "Black",
+    "sim_variant": "(eSim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "e",
+    "memory": "512",
+    "color": "Black",
+    "sim_variant": "(dual)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "e",
+    "memory": "512",
+    "color": "Black",
+    "sim_variant": "(sim+esim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "e",
+    "memory": "512",
+    "color": "Pink",
+    "sim_variant": "(eSim)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "e",
+    "memory": "512",
+    "color": "Pink",
+    "sim_variant": "(dual)"
+  },
+  {
+    "family": "iphone",
+    "year": 17,
+    "variant": "e",
+    "memory": "512",
+    "color": "Pink",
+    "sim_variant": "(sim+esim)"
+  }
 ]
-

@@ -10,7 +10,8 @@ from pathlib import Path
 from typing import Iterable, Iterator, Optional
 
 import iphone_processor as base_proc
-from price_merge import merge_min_byn
+
+from block_rules import BLOCK_DASH_LINE
 
 
 @dataclass(frozen=True)
@@ -21,14 +22,20 @@ class DeviceKey:
     variant: str  # "", "Plus", "Pro", "Pro Max", "e"
     memory: str  # "128" | "256" | "512" | "1TB" | ...
     color: str  # canonical color
-    sim_variant: str  # "1+1" | "eSim" | "dual"
+    sim_variant: str  # 13–16: "1+1"|"eSim"|"dual"; 17 и Air: "(sim+esim)"|"(eSim)"|"(dual)" — как в JSON-базе
 
 
 IPHONE_ICON = "📱"
 
+# Ключи SIM в базе (JSON) и в DeviceKey для iPhone 17 / Air = подпись в рознице.
+SIM_17_1P1 = "(sim+esim)"
+SIM_17_ESIM = "(eSim)"
+SIM_17_DUAL = "(dual)"
+_SIM_ORDER_17_AIR = (SIM_17_1P1, SIM_17_ESIM, SIM_17_DUAL)
 
-def _sim_display_label(sim_variant: str) -> str:
-    """Подпись SIM в рознице: без флагов стран."""
+
+def _sim_display_label_13_16(sim_variant: str) -> str:
+    """Подпись SIM для iPhone 13–16 (как в robot_price)."""
     if sim_variant == "dual":
         return "Dual"
     if sim_variant == "eSim":
@@ -40,15 +47,15 @@ def _format_model_line(key: DeviceKey, *, show_13_16_sim_labels: bool = False) -
     """Строка модели без слова iPhone: префикс 📱.
 
     iPhone 13–16: при выключенном доп. фильтре тип SIM не показываем (стандарт 1+1).
-    При включённом — показываем 1+1 / eSim / Dual (без флагов стран).
-    Air и iPhone 17 — тип SIM в названии как раньше.
+    При включённом — 1+1 / eSim / Dual.
+    iPhone 17 (включая 17e, Pro, Pro Max) и Air — в названии то же значение sim_variant, что в базе (JSON).
     """
     if key.family == "air":
         core = f"Air {key.memory} {key.color} {key.sim_variant}"
         return f"{IPHONE_ICON}{core}"
 
     if key.family == "iphone" and key.year == 17:
-        sim_tail = f" {_sim_display_label(key.sim_variant)}"
+        sim_tail = f" {key.sim_variant}"
         if key.variant == "":
             core = f"{key.year} {key.memory} {key.color}{sim_tail}"
         elif key.variant == "e":
@@ -65,7 +72,7 @@ def _format_model_line(key: DeviceKey, *, show_13_16_sim_labels: bool = False) -
 
     # iPhone 13–16
     hide_sim = not show_13_16_sim_labels
-    sim_tail = "" if hide_sim else f" {_sim_display_label(key.sim_variant)}"
+    sim_tail = "" if hide_sim else f" {_sim_display_label_13_16(key.sim_variant)}"
     if key.variant == "":
         core = f"{key.year} {key.memory} {key.color}{sim_tail}"
     elif key.variant == "Plus":
@@ -79,42 +86,6 @@ def _format_model_line(key: DeviceKey, *, show_13_16_sim_labels: bool = False) -
     else:
         core = f"{key.year} {key.variant} {key.memory} {key.color}{sim_tail}"
     return f"{IPHONE_ICON}{core}"
-
-
-def _format_retail_site_model_line(key: DeviceKey) -> str:
-    """Строка для сайта: iPhone 17 или Air — без типа SIM (1+1 / eSim / Dual)."""
-    if key.family == "air":
-        return f"{IPHONE_ICON}Air {key.memory} {key.color}"
-    if key.family == "iphone" and key.year == 17:
-        if key.variant == "":
-            core = f"{key.year} {key.memory} {key.color}"
-        elif key.variant == "e":
-            core = f"{key.year}e {key.memory} {key.color}"
-        elif key.variant == "Plus":
-            core = f"{key.year} Plus {key.memory} {key.color}"
-        elif key.variant == "Pro Max":
-            core = f"{key.year} Pro Max {key.memory} {key.color}"
-        elif key.variant == "Pro":
-            core = f"{key.year} Pro {key.memory} {key.color}"
-        else:
-            core = f"{key.year} {key.variant} {key.memory} {key.color}"
-        return f"{IPHONE_ICON}{core}"
-    raise ValueError("ожидается iPhone 17 или iPhone Air")
-
-
-def _format_retail_site_price_line(key: DeviceKey, *, price_byn: int) -> str:
-    """Одна строка списка для сайта: модель без SIM — цена BYN (как в Telegram-разметке)."""
-    model = _format_retail_site_model_line(key)
-    return f"{model} - **{price_byn} BYN**"
-
-
-def _retail_site_sort_key(key: DeviceKey) -> tuple:
-    """Сначала линейка 17 (17e → 17 → Pro → Pro Max), затем Air; внутри — память → цвет."""
-    if key.family == "air":
-        return (1, 0, _memory_rank(key.memory), key.color.lower())
-    if key.family == "iphone" and key.year == 17:
-        return (0, _variant_rank_device(key), _memory_rank(key.memory), key.color.lower())
-    raise ValueError("ожидается iPhone 17 или iPhone Air")
 
 
 def _format_telegram_line(
@@ -190,26 +161,17 @@ def _sim_rank(s: str) -> int:
     try:
         return _SIM_ORDER.index(s)
     except ValueError:
+        pass
+    try:
+        return _SIM_ORDER_17_AIR.index(s)
+    except ValueError:
         return 999
 
 
 def _retail_sort_key(key: DeviceKey) -> tuple:
-    """Сортировка розницы. Air в конце.
-
-    iPhone 17: поколение → вариант → память → цвет → SIM (1+1 / eSim / Dual рядом по цвету).
-    Остальные iPhone: поколение → вариант → память → SIM → цвет.
-    """
+    """Сортировка розницы: поколение → вариант (Plus/Pro/…) → память → SIM → цвет. Air в конце."""
     if key.family == "air":
         return (2, 0, 0, _memory_rank(key.memory), _sim_rank(key.sim_variant), key.color.lower())
-    if key.family == "iphone" and key.year == 17:
-        return (
-            0,
-            key.year,
-            _variant_rank_device(key),
-            _memory_rank(key.memory),
-            key.color.lower(),
-            _sim_rank(key.sim_variant),
-        )
     return (
         0,
         key.year,
@@ -232,7 +194,7 @@ def _inject_retail_separators(sorted_pairs: list[tuple[DeviceKey, str]]) -> list
     out: list[str] = []
     prev_group: Optional[tuple] = None
     prev_memory: Optional[str] = None
-    dash_line = "------------------------"
+    dash_line = BLOCK_DASH_LINE
     for key, line in sorted_pairs:
         g = _model_group_for_separator(key)
         if prev_group is not None and g != prev_group:
@@ -303,17 +265,8 @@ def _extract_air_key(name_raw: str) -> Optional[DeviceKey]:
         return None
 
     lowered = s.lower()
-    # iPad Air в опте: «Air 11/13 … M…», не iPhone Air
-    if re.search(r"\bipad\b", lowered):
-        return None
-    if re.search(r"\bair\s+(11|13)\s+m\d+", lowered):
-        return None
     memory = None
-    if re.search(r"\b2\s*tb\b|\b2tb\b", lowered):
-        memory = "2TB"
-    elif re.search(r"\b1\s*tb\b|\b1tb\b", lowered):
-        memory = "1TB"
-    elif re.search(r"\b512\b", lowered):
+    if re.search(r"\b512\b", lowered):
         memory = "512"
     elif re.search(r"\b256\b", lowered):
         memory = "256"
@@ -332,7 +285,7 @@ def _extract_air_key(name_raw: str) -> Optional[DeviceKey]:
         return None
 
     color_title = color_raw[:1].upper() + color_raw[1:]
-    return DeviceKey(family="air", year=0, variant="", memory=memory, color=color_title, sim_variant="eSim")
+    return DeviceKey(family="air", year=0, variant="", memory=memory, color=color_title, sim_variant=SIM_17_ESIM)
 
 
 def _extract_iphone17_key(name_raw: str) -> Optional[DeviceKey]:
@@ -344,10 +297,6 @@ def _extract_iphone17_key(name_raw: str) -> Optional[DeviceKey]:
     if not is_17e and not is_17:
         return None
 
-    # Опт часто пишет «17 Air …» вместо iPhone Air — это не линейка 17.
-    if re.search(r"\b17\s+air\b", lowered):
-        return None
-
     # Variant (17e раньше Pro, чтобы не перепутать с «17 Pro»)
     variant = ""
     if is_17e:
@@ -356,8 +305,6 @@ def _extract_iphone17_key(name_raw: str) -> Optional[DeviceKey]:
         variant = "Pro Max"
     elif re.search(r"\bpro\b", lowered):
         variant = "Pro"
-    elif re.search(r"\bplus\b", lowered):
-        variant = "Plus"
 
     # Memory
     memory = None
@@ -386,20 +333,27 @@ def _extract_iphone17_key(name_raw: str) -> Optional[DeviceKey]:
 
     color_title = color_raw[:1].upper() + color_raw[1:]
 
-    # SIM variant
-    sim_variant = None
-    if re.search(r"\b2\s*sim\b|\b2sim\b", lowered) or "2sim" in lowered:
-        sim_variant = "dual"
+    # SIM: ключи как в JSON-базе — (sim+esim) / (eSim) / (dual)
+    sim_variant: Optional[str] = None
+    s_nospace = lowered.replace(" ", "")
+    if "(sim+esim)" in s_nospace:
+        sim_variant = SIM_17_1P1
+    elif re.search(r"\(\s*e\s*-?\s*sim\s*\)", s, re.IGNORECASE):
+        sim_variant = SIM_17_ESIM
+    elif "(dual)" in lowered:
+        sim_variant = SIM_17_DUAL
+    elif re.search(r"\b2\s*sim\b|\b2sim\b", lowered) or "2sim" in lowered:
+        sim_variant = SIM_17_DUAL
     elif re.search(r"\b1\s*\+\s*1\b|1\+1", lowered):
-        sim_variant = "1+1"
-    elif re.search(r"sim\s*\+\s*e", lowered) or re.search(r"sim\s*\+\s*e-?sim", lowered) or "sim+esim" in lowered.replace(" ", ""):
-        sim_variant = "1+1"
+        sim_variant = SIM_17_1P1
+    elif re.search(r"sim\s*\+\s*e", lowered) or re.search(r"sim\s*\+\s*e-?sim", lowered) or "sim+esim" in s_nospace:
+        sim_variant = SIM_17_1P1
     elif re.search(r"e-?sim", lowered) or "esim" in lowered:
-        sim_variant = "eSim"
+        sim_variant = SIM_17_ESIM
     elif re.search(r"\bdual\b", lowered):
-        sim_variant = "dual"
+        sim_variant = SIM_17_DUAL
     elif re.search(r"\bsim\b", lowered):
-        sim_variant = "dual"
+        sim_variant = SIM_17_DUAL
 
     if sim_variant is None:
         return None
@@ -408,9 +362,6 @@ def _extract_iphone17_key(name_raw: str) -> Optional[DeviceKey]:
 
 
 def extract_device_key(name_raw: str) -> Optional[DeviceKey]:
-    # См. wholesale_line_skips_iphone_13_16_parsing — та же логика, что и в process_iphone_all.
-    if base_proc.wholesale_line_skips_iphone_13_16_parsing(name_raw):
-        return None
     # Priority matters: "Air" also contains "iPhone" sometimes, etc.
     key = _extract_iphone17_key(name_raw)
     if key is not None:
@@ -476,15 +427,18 @@ def load_all_iphone_base(
     return base_order, base_map
 
 
-def collect_iphone_all_best_byn_from_text(
+def process_iphone_all_from_text(
     input_text: str,
     *,
     input_format: str,
+    base_order: list[DeviceKey],
     base: dict[DeviceKey, dict],
     usd_to_byn: Decimal,
     markup_usd: Decimal,
+    missing_price_text: str = "по запросу",
+    delimiter_out: str = ";",
     include_cn_us_13_16: bool = False,
-) -> tuple[dict[DeviceKey, int], set[DeviceKey]]:
+) -> str:
     best_numeric: dict[DeviceKey, int] = {}
     has_numeric: set[DeviceKey] = set()
 
@@ -495,9 +449,6 @@ def collect_iphone_all_best_byn_from_text(
 
     for name_raw, price_raw in rows:
         if price_raw is None:
-            continue
-
-        if base_proc.wholesale_line_skips_all_iphone_row_processing(name_raw):
             continue
 
         price_usd = base_proc._try_parse_price_usd(price_raw)
@@ -520,9 +471,6 @@ def collect_iphone_all_best_byn_from_text(
             _update_best_price(best_numeric, has_numeric, ka, price_byn)
             continue
 
-        if base_proc.wholesale_line_skips_iphone_13_16_parsing(name_raw):
-            continue
-
         ik = base_proc._extract_year_variant_memory_color(name_raw)
         if ik is None or ik.year not in (13, 14, 15, 16):
             continue
@@ -537,6 +485,7 @@ def collect_iphone_all_best_byn_from_text(
         has_esim = bool(re.search(r"e\s*-?\s*sim|\besim\b", low))
 
         if include_cn_us_13_16:
+            # 1+1 — только строки без меток Китай/США; eSim/Dual — только с CN/US в опте.
             if not blocked:
                 k11 = DeviceKey(
                     family="iphone",
@@ -573,18 +522,6 @@ def collect_iphone_all_best_byn_from_text(
                 continue
             _update_best_price(best_numeric, has_numeric, core_key, price_byn)
 
-    return best_numeric, has_numeric
-
-
-def format_iphone_all_to_csv(
-    best_numeric: dict[DeviceKey, int],
-    has_numeric: set[DeviceKey],
-    *,
-    base_order: list[DeviceKey],
-    missing_price_text: str = "по запросу",
-    delimiter_out: str = ";",
-    include_cn_us_13_16: bool = False,
-) -> str:
     pairs: list[tuple[DeviceKey, str]] = []
     for key in base_order:
         if key.family == "iphone" and 13 <= key.year <= 16 and include_cn_us_13_16:
@@ -681,152 +618,6 @@ def format_iphone_all_to_csv(
         pairs.append((key, line))
 
     pairs.sort(key=lambda p: _retail_sort_key(p[0]))
-    lines = _inject_retail_separators(pairs)
-    rows: list[str] = []
-    for L in lines:
-        if L == "":
-            rows.append("")
-        else:
-            rows.append(_csv_one_cell_row(L, delimiter_out))
-    return "\n".join(rows) + ("\n" if rows else "")
-
-
-def process_iphone_all_from_text(
-    input_text: str,
-    *,
-    input_format: str,
-    base_order: list[DeviceKey],
-    base: dict[DeviceKey, dict],
-    usd_to_byn: Decimal,
-    markup_usd: Decimal,
-    missing_price_text: str = "по запросу",
-    delimiter_out: str = ";",
-    include_cn_us_13_16: bool = False,
-) -> str:
-    best, has_n = collect_iphone_all_best_byn_from_text(
-        input_text,
-        input_format=input_format,
-        base=base,
-        usd_to_byn=usd_to_byn,
-        markup_usd=markup_usd,
-        include_cn_us_13_16=include_cn_us_13_16,
-    )
-    return format_iphone_all_to_csv(
-        best,
-        has_n,
-        base_order=base_order,
-        missing_price_text=missing_price_text,
-        delimiter_out=delimiter_out,
-        include_cn_us_13_16=include_cn_us_13_16,
-    )
-
-
-def merge_iphone_all_from_texts(
-    raw_a: str,
-    raw_b: str,
-    *,
-    input_format: str,
-    base_order: list[DeviceKey],
-    base: dict[DeviceKey, dict],
-    usd_to_byn: Decimal,
-    markup_usd_a: Decimal,
-    markup_usd_b: Decimal,
-    missing_price_text: str = "по запросу",
-    delimiter_out: str = ";",
-    include_cn_us_13_16: bool = False,
-) -> str:
-    ba, _ = collect_iphone_all_best_byn_from_text(
-        raw_a,
-        input_format=input_format,
-        base=base,
-        usd_to_byn=usd_to_byn,
-        markup_usd=markup_usd_a,
-        include_cn_us_13_16=include_cn_us_13_16,
-    )
-    bb, _ = collect_iphone_all_best_byn_from_text(
-        raw_b,
-        input_format=input_format,
-        base=base,
-        usd_to_byn=usd_to_byn,
-        markup_usd=markup_usd_b,
-        include_cn_us_13_16=include_cn_us_13_16,
-    )
-    merged = merge_min_byn(ba, bb)
-    has_m = set(merged.keys())
-    return format_iphone_all_to_csv(
-        merged,
-        has_m,
-        base_order=base_order,
-        missing_price_text=missing_price_text,
-        delimiter_out=delimiter_out,
-        include_cn_us_13_16=include_cn_us_13_16,
-    )
-
-
-def collect_retail_site_min_by_group(
-    input_text: str,
-    *,
-    input_format: str,
-    base: dict[DeviceKey, dict],
-) -> dict[tuple, tuple[int, DeviceKey]]:
-    """Розничный прайс (BYN): iPhone 17 и iPhone Air. Группа — минимальная BYN среди вариантов SIM.
-
-    Ключ группы: (\"17\", variant, memory, color) или (\"air\", memory, color).
-    """
-    best: dict[tuple, tuple[int, DeviceKey]] = {}
-
-    rows = base_proc._iter_input_rows_from_string(input_text, input_format=input_format)
-
-    for name_raw, price_raw in rows:
-        if price_raw is None:
-            continue
-        if base_proc.wholesale_line_skips_all_iphone_row_processing(name_raw):
-            continue
-        price_byn = base_proc._try_parse_price_byn(price_raw)
-        if price_byn is None:
-            continue
-
-        k = _extract_iphone17_key(name_raw)
-        if k is not None and k in base:
-            g: tuple = ("17", k.variant, k.memory, k.color)
-        else:
-            ka = _extract_air_key(name_raw)
-            if ka is None or ka not in base:
-                continue
-            k = ka
-            g = ("air", k.memory, k.color)
-
-        prev = best.get(g)
-        if prev is None or price_byn < prev[0]:
-            best[g] = (price_byn, k)
-
-    return best
-
-
-def process_iphone17_site_from_text(
-    input_text: str,
-    *,
-    input_format: str,
-    base: dict[DeviceKey, dict],
-    delimiter_out: str = ";",
-) -> str:
-    """Список для сайта: розничные BYN без пересчёта; min на память+цвет внутри линейки; iPhone 17 + Air; без SIM в названии."""
-    groups = collect_retail_site_min_by_group(
-        input_text,
-        input_format=input_format,
-        base=base,
-    )
-    if not groups:
-        return ""
-
-    winners: list[tuple[DeviceKey, int]] = []
-    for _g, (price_byn, key) in groups.items():
-        winners.append((key, price_byn))
-    winners.sort(key=lambda t: _retail_site_sort_key(t[0]))
-
-    pairs: list[tuple[DeviceKey, str]] = [
-        (key, _format_retail_site_price_line(key, price_byn=price_byn)) for key, price_byn in winners
-    ]
     lines = _inject_retail_separators(pairs)
     rows: list[str] = []
     for L in lines:

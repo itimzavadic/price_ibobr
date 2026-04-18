@@ -11,11 +11,11 @@ from collections import defaultdict
 from typing import Optional
 
 import iphone_processor as base_proc
+from block_rules import BLOCK_DASH_LINE
 from iphone_processor import _iter_input_rows_from_string
 from price_merge import merge_min_byn
 
 MACBOOK_ICON = "\U0001f4bb"  # 💻
-DASH_LINE = "------------------------"
 
 _TRAILING_FLAGS = re.compile(r"[\U0001F1E6-\U0001F1FF]{2,}$")
 _TRAIL_SKU = re.compile(
@@ -452,7 +452,7 @@ def format_macbook_to_csv(
     rows_out: list[str] = []
     for bi, bkey in enumerate(sorted_block_keys):
         if bi > 0:
-            rows_out.append(_csv_one_cell_row(DASH_LINE, delimiter_out))
+            rows_out.append(_csv_one_cell_row(BLOCK_DASH_LINE, delimiter_out))
         keys_in = blocks[bkey]
         keys_in.sort(
             key=lambda k: (

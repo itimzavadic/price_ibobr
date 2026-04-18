@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Optional
 
 import iphone_processor as base_proc
+from block_rules import BLOCK_DASH_LINE
 from iphone_processor import _iter_input_rows_from_string
 from price_merge import merge_min_byn
 
@@ -218,7 +219,7 @@ def _csv_one_cell_row(value: str, delimiter: str) -> str:
 
 def _inject_watch_separators(pairs: list[tuple[WatchKey, str]]) -> list[str]:
     out: list[str] = []
-    dash = "------------------------"
+    dash = BLOCK_DASH_LINE
     prev_series: Optional[str] = None
     prev_size: Optional[str] = None
     for key, line in pairs:

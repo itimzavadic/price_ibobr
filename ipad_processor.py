@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Optional
 
 import iphone_processor as base_proc
+from block_rules import BLOCK_DASH_LINE
 from iphone_processor import _iter_input_rows_from_string
 from price_merge import merge_min_byn
 
@@ -218,7 +219,7 @@ def _ipad_group(k: IpadKey) -> tuple:
 
 def _inject_ipad_separators(pairs: list[tuple[IpadKey, str]]) -> list[str]:
     out: list[str] = []
-    dash = "------------------------"
+    dash = BLOCK_DASH_LINE
     prev_g: Optional[tuple] = None
     prev_mem: Optional[str] = None
     for key, line in pairs:
