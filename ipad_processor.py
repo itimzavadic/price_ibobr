@@ -10,11 +10,10 @@ from pathlib import Path
 from typing import Optional
 
 import iphone_processor as base_proc
-from block_rules import BLOCK_DASH_LINE
 from iphone_processor import _iter_input_rows_from_string
 from price_merge import merge_min_byn
 
-IPAD_ICON = "\u25fe\ufe0f"
+IPAD_ICON = "\u2b1b\ufe0f"
 
 _TRAILING_FLAGS = re.compile(r"[\U0001F1E6-\U0001F1FF]{2,}$")
 _TRAIL_SKU = re.compile(
@@ -219,7 +218,7 @@ def _ipad_group(k: IpadKey) -> tuple:
 
 def _inject_ipad_separators(pairs: list[tuple[IpadKey, str]]) -> list[str]:
     out: list[str] = []
-    dash = BLOCK_DASH_LINE
+    dash = "━━━━━━━━━━━━━━━━"
     prev_g: Optional[tuple] = None
     prev_mem: Optional[str] = None
     for key, line in pairs:

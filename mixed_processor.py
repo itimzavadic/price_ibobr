@@ -9,7 +9,7 @@ from ipad_processor import IpadKey, _parse_ipad_name, process_ipad_from_text
 from macbook_processor import MacbookKey, process_macbook_from_text, wholesale_text_looks_like_macbook
 from watch_processor import WatchKey, _parse_watch_name, process_watch_from_text
 
-SECTION_SEP = "\n\n------------------------\n\n"
+SECTION_SEP = "\n\n━━━━━━━━━━━━━━━━\n\n"
 
 
 def _input_has_iphone_rows(input_text: str, input_format: str) -> bool:

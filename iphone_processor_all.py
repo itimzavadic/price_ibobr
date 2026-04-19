@@ -12,8 +12,6 @@ from typing import Iterable, Iterator, Optional
 import iphone_processor as base_proc
 from price_merge import merge_min_byn
 
-from block_rules import BLOCK_DASH_LINE
-
 
 @dataclass(frozen=True)
 class DeviceKey:
@@ -23,40 +21,45 @@ class DeviceKey:
     variant: str  # "", "Plus", "Pro", "Pro Max", "e"
     memory: str  # "128" | "256" | "512" | "1TB" | ...
     color: str  # canonical color
-    sim_variant: str  # 13–16: "1+1"|"eSim"|"dual"; 17 и Air: "(sim+esim)"|"(eSim)"|"(dual)" — как в JSON-базе
+    sim_variant: str  # "(sim+esim)" | "(eSim)" | "(dual)"
 
 
 IPHONE_ICON = "📱"
-
-# Ключи SIM в базе (JSON) и в DeviceKey для iPhone 17 / Air = подпись в рознице.
-SIM_17_1P1 = "(sim+esim)"
-SIM_17_ESIM = "(eSim)"
-SIM_17_DUAL = "(dual)"
-_SIM_ORDER_17_AIR = (SIM_17_1P1, SIM_17_ESIM, SIM_17_DUAL)
+SIM_VARIANT_SIM_ESIM = "(sim+esim)"
+SIM_VARIANT_ESIM = "(eSim)"
+SIM_VARIANT_DUAL = "(dual)"
 
 
-def _sim_display_label_13_16(sim_variant: str) -> str:
-    """Подпись SIM для iPhone 13–16 (как в robot_price)."""
-    if sim_variant == "dual":
-        return "Dual"
-    if sim_variant == "eSim":
-        return "eSim"
-    return "1+1"
+def _normalize_sim_variant(sim_variant: str) -> str:
+    s = sim_variant.strip().lower().replace(" ", "")
+    if s in {"1+1", "sim+esim", "(sim+esim)"}:
+        return SIM_VARIANT_SIM_ESIM
+    if s in {"esim", "e-sim", "(esim)"}:
+        return SIM_VARIANT_ESIM
+    if s in {"dual", "(dual)", "2sim", "2-sim"}:
+        return SIM_VARIANT_DUAL
+    return sim_variant.strip()
+
+
+def _sim_display_label(sim_variant: str) -> str:
+    """Подпись SIM в рознице: без флагов стран."""
+    return _normalize_sim_variant(sim_variant)
 
 
 def _format_model_line(key: DeviceKey, *, show_13_16_sim_labels: bool = False) -> str:
     """Строка модели без слова iPhone: префикс 📱.
 
-    iPhone 13–16: при выключенном доп. фильтре тип SIM не показываем (стандарт 1+1).
-    При включённом — 1+1 / eSim / Dual.
-    iPhone 17 (включая 17e, Pro, Pro Max) и Air — в названии то же значение sim_variant, что в базе (JSON).
+    iPhone 13–16: при выключенном доп. фильтре тип SIM не показываем.
+    При включённом — показываем (sim+esim) / (eSim) / (dual).
+    Air и iPhone 17 — тип SIM в названии как раньше.
     """
     if key.family == "air":
-        core = f"Air {key.memory} {key.color} {key.sim_variant}"
+        sim_label = _sim_display_label(key.sim_variant)
+        core = f"Air {key.memory} {key.color} {sim_label}"
         return f"{IPHONE_ICON}{core}"
 
     if key.family == "iphone" and key.year == 17:
-        sim_tail = f" {key.sim_variant}"
+        sim_tail = f" {_sim_display_label(key.sim_variant)}"
         if key.variant == "":
             core = f"{key.year} {key.memory} {key.color}{sim_tail}"
         elif key.variant == "e":
@@ -73,7 +76,7 @@ def _format_model_line(key: DeviceKey, *, show_13_16_sim_labels: bool = False) -
 
     # iPhone 13–16
     hide_sim = not show_13_16_sim_labels
-    sim_tail = "" if hide_sim else f" {_sim_display_label_13_16(key.sim_variant)}"
+    sim_tail = "" if hide_sim else f" {_sim_display_label(key.sim_variant)}"
     if key.variant == "":
         core = f"{key.year} {key.memory} {key.color}{sim_tail}"
     elif key.variant == "Plus":
@@ -90,7 +93,7 @@ def _format_model_line(key: DeviceKey, *, show_13_16_sim_labels: bool = False) -
 
 
 def _format_retail_site_model_line(key: DeviceKey) -> str:
-    """Строка для сайта: iPhone 17 или Air — без типа SIM в названии."""
+    """Строка для сайта: iPhone 17 или Air — без типа SIM."""
     if key.family == "air":
         return f"{IPHONE_ICON}Air {key.memory} {key.color}"
     if key.family == "iphone" and key.year == 17:
@@ -146,7 +149,7 @@ def _iphone_13_16_base_key(ik) -> DeviceKey:
         variant=ik.variant,
         memory=ik.memory,
         color=ik.color,
-        sim_variant="1+1",
+        sim_variant=SIM_VARIANT_SIM_ESIM,
     )
 
 
@@ -169,7 +172,7 @@ _VARIANT_ORDER_16 = ("e", "", "Plus", "Pro", "Pro Max")
 # 17: сначала 17e, затем обычный 17, потом Pro / Pro Max.
 _VARIANT_ORDER_17 = ("e", "", "Plus", "Pro", "Pro Max")
 _MEMORY_ORDER = ("128", "256", "512", "1TB", "2TB")
-_SIM_ORDER = ("1+1", "eSim", "dual")
+_SIM_ORDER = (SIM_VARIANT_SIM_ESIM, SIM_VARIANT_ESIM, SIM_VARIANT_DUAL)
 
 
 def _variant_rank_device(key: DeviceKey) -> int:
@@ -195,20 +198,30 @@ def _memory_rank(m: str) -> int:
 
 
 def _sim_rank(s: str) -> int:
+    s = _normalize_sim_variant(s)
     try:
         return _SIM_ORDER.index(s)
-    except ValueError:
-        pass
-    try:
-        return _SIM_ORDER_17_AIR.index(s)
     except ValueError:
         return 999
 
 
 def _retail_sort_key(key: DeviceKey) -> tuple:
-    """Сортировка розницы: поколение → вариант (Plus/Pro/…) → память → SIM → цвет. Air в конце."""
+    """Сортировка розницы. Air в конце.
+
+    iPhone 17: поколение → вариант → память → цвет → SIM ((sim+esim)/(eSim)/(dual) рядом по цвету).
+    Остальные iPhone: поколение → вариант → память → SIM → цвет.
+    """
     if key.family == "air":
         return (2, 0, 0, _memory_rank(key.memory), _sim_rank(key.sim_variant), key.color.lower())
+    if key.family == "iphone" and key.year == 17:
+        return (
+            0,
+            key.year,
+            _variant_rank_device(key),
+            _memory_rank(key.memory),
+            key.color.lower(),
+            _sim_rank(key.sim_variant),
+        )
     return (
         0,
         key.year,
@@ -217,6 +230,34 @@ def _retail_sort_key(key: DeviceKey) -> tuple:
         _sim_rank(key.sim_variant),
         key.color.lower(),
     )
+
+
+def _retail_sort_key_with_price(
+    key: DeviceKey,
+    *,
+    best_numeric: dict[DeviceKey, int],
+    has_numeric: set[DeviceKey],
+) -> tuple:
+    """Сортировка для итогового CSV.
+
+    Для iPhone 13-16 внутри блока памяти сортируем по возрастанию цены,
+    а при равной/отсутствующей цене — по цвету.
+    Для остальных категорий сохраняем текущий порядок.
+    """
+    if key.family == "iphone" and 13 <= key.year <= 16:
+        has_price = 0 if key in has_numeric else 1
+        price = best_numeric[key] if key in has_numeric else 10**9
+        return (
+            0,
+            key.year,
+            _variant_rank_device(key),
+            _memory_rank(key.memory),
+            _sim_rank(key.sim_variant),
+            has_price,
+            price,
+            key.color.lower(),
+        )
+    return _retail_sort_key(key)
 
 
 def _model_group_for_separator(key: DeviceKey) -> tuple:
@@ -231,7 +272,7 @@ def _inject_retail_separators(sorted_pairs: list[tuple[DeviceKey, str]]) -> list
     out: list[str] = []
     prev_group: Optional[tuple] = None
     prev_memory: Optional[str] = None
-    dash_line = BLOCK_DASH_LINE
+    dash_line = "━━━━━━━━━━━━━━━━"
     for key, line in sorted_pairs:
         g = _model_group_for_separator(key)
         if prev_group is not None and g != prev_group:
@@ -292,7 +333,7 @@ def _extract_iphone13_16_key(name_raw: str) -> Optional[DeviceKey]:
         variant=key13.variant,
         memory=key13.memory,
         color=key13.color,
-        sim_variant="1+1",
+        sim_variant=SIM_VARIANT_SIM_ESIM,
     )
 
 
@@ -302,8 +343,17 @@ def _extract_air_key(name_raw: str) -> Optional[DeviceKey]:
         return None
 
     lowered = s.lower()
+    # iPad Air в опте: «Air 11/13 … M…», не iPhone Air
+    if re.search(r"\bipad\b", lowered):
+        return None
+    if re.search(r"\bair\s+(11|13)\s+m\d+", lowered):
+        return None
     memory = None
-    if re.search(r"\b512\b", lowered):
+    if re.search(r"\b2\s*tb\b|\b2tb\b", lowered):
+        memory = "2TB"
+    elif re.search(r"\b1\s*tb\b|\b1tb\b", lowered):
+        memory = "1TB"
+    elif re.search(r"\b512\b", lowered):
         memory = "512"
     elif re.search(r"\b256\b", lowered):
         memory = "256"
@@ -322,7 +372,14 @@ def _extract_air_key(name_raw: str) -> Optional[DeviceKey]:
         return None
 
     color_title = color_raw[:1].upper() + color_raw[1:]
-    return DeviceKey(family="air", year=0, variant="", memory=memory, color=color_title, sim_variant=SIM_17_ESIM)
+    return DeviceKey(
+        family="air",
+        year=0,
+        variant="",
+        memory=memory,
+        color=color_title,
+        sim_variant=SIM_VARIANT_ESIM,
+    )
 
 
 def _extract_iphone17_key(name_raw: str) -> Optional[DeviceKey]:
@@ -334,6 +391,10 @@ def _extract_iphone17_key(name_raw: str) -> Optional[DeviceKey]:
     if not is_17e and not is_17:
         return None
 
+    # Опт часто пишет «17 Air …» вместо iPhone Air — это не линейка 17.
+    if re.search(r"\b17\s+air\b", lowered):
+        return None
+
     # Variant (17e раньше Pro, чтобы не перепутать с «17 Pro»)
     variant = ""
     if is_17e:
@@ -342,6 +403,8 @@ def _extract_iphone17_key(name_raw: str) -> Optional[DeviceKey]:
         variant = "Pro Max"
     elif re.search(r"\bpro\b", lowered):
         variant = "Pro"
+    elif re.search(r"\bplus\b", lowered):
+        variant = "Plus"
 
     # Memory
     memory = None
@@ -370,27 +433,20 @@ def _extract_iphone17_key(name_raw: str) -> Optional[DeviceKey]:
 
     color_title = color_raw[:1].upper() + color_raw[1:]
 
-    # SIM: ключи как в JSON-базе — (sim+esim) / (eSim) / (dual)
-    sim_variant: Optional[str] = None
-    s_nospace = lowered.replace(" ", "")
-    if "(sim+esim)" in s_nospace:
-        sim_variant = SIM_17_1P1
-    elif re.search(r"\(\s*e\s*-?\s*sim\s*\)", s, re.IGNORECASE):
-        sim_variant = SIM_17_ESIM
-    elif "(dual)" in lowered:
-        sim_variant = SIM_17_DUAL
-    elif re.search(r"\b2\s*sim\b|\b2sim\b", lowered) or "2sim" in lowered:
-        sim_variant = SIM_17_DUAL
+    # SIM variant
+    sim_variant = None
+    if re.search(r"\b2\s*sim\b|\b2sim\b", lowered) or "2sim" in lowered:
+        sim_variant = SIM_VARIANT_DUAL
     elif re.search(r"\b1\s*\+\s*1\b|1\+1", lowered):
-        sim_variant = SIM_17_1P1
-    elif re.search(r"sim\s*\+\s*e", lowered) or re.search(r"sim\s*\+\s*e-?sim", lowered) or "sim+esim" in s_nospace:
-        sim_variant = SIM_17_1P1
+        sim_variant = SIM_VARIANT_SIM_ESIM
+    elif re.search(r"sim\s*\+\s*e", lowered) or re.search(r"sim\s*\+\s*e-?sim", lowered) or "sim+esim" in lowered.replace(" ", ""):
+        sim_variant = SIM_VARIANT_SIM_ESIM
     elif re.search(r"e-?sim", lowered) or "esim" in lowered:
-        sim_variant = SIM_17_ESIM
+        sim_variant = SIM_VARIANT_ESIM
     elif re.search(r"\bdual\b", lowered):
-        sim_variant = SIM_17_DUAL
+        sim_variant = SIM_VARIANT_DUAL
     elif re.search(r"\bsim\b", lowered):
-        sim_variant = SIM_17_DUAL
+        sim_variant = SIM_VARIANT_DUAL
 
     if sim_variant is None:
         return None
@@ -399,6 +455,9 @@ def _extract_iphone17_key(name_raw: str) -> Optional[DeviceKey]:
 
 
 def extract_device_key(name_raw: str) -> Optional[DeviceKey]:
+    # См. wholesale_line_skips_iphone_13_16_parsing — та же логика, что и в process_iphone_all.
+    if base_proc.wholesale_line_skips_iphone_13_16_parsing(name_raw):
+        return None
     # Priority matters: "Air" also contains "iPhone" sometimes, etc.
     key = _extract_iphone17_key(name_raw)
     if key is not None:
@@ -430,7 +489,7 @@ def load_all_iphone_base(
             variant=str(item["variant"]),
             memory=str(item["memory"]),
             color=str(item["color"]),
-            sim_variant="1+1",
+            sim_variant=SIM_VARIANT_SIM_ESIM,
         )
         base_order.append(key)
         base_map[key] = item
@@ -443,7 +502,7 @@ def load_all_iphone_base(
             variant=str(item.get("variant", "")),
             memory=str(item["memory"]),
             color=str(item["color"]),
-            sim_variant=str(item["sim_variant"]),
+            sim_variant=_normalize_sim_variant(str(item["sim_variant"])),
         )
         base_order.append(key)
         base_map[key] = item
@@ -456,7 +515,7 @@ def load_all_iphone_base(
             variant=str(item.get("variant", "")),
             memory=str(item["memory"]),
             color=str(item["color"]),
-            sim_variant=str(item["sim_variant"]),
+            sim_variant=_normalize_sim_variant(str(item["sim_variant"])),
         )
         base_order.append(key)
         base_map[key] = item
@@ -485,6 +544,9 @@ def collect_iphone_all_best_byn_from_text(
         if price_raw is None:
             continue
 
+        if base_proc.wholesale_line_skips_all_iphone_row_processing(name_raw):
+            continue
+
         price_usd = base_proc._try_parse_price_usd(price_raw)
         if price_usd is None:
             continue
@@ -505,6 +567,9 @@ def collect_iphone_all_best_byn_from_text(
             _update_best_price(best_numeric, has_numeric, ka, price_byn)
             continue
 
+        if base_proc.wholesale_line_skips_iphone_13_16_parsing(name_raw):
+            continue
+
         ik = base_proc._extract_year_variant_memory_color(name_raw)
         if ik is None or ik.year not in (13, 14, 15, 16):
             continue
@@ -519,7 +584,6 @@ def collect_iphone_all_best_byn_from_text(
         has_esim = bool(re.search(r"e\s*-?\s*sim|\besim\b", low))
 
         if include_cn_us_13_16:
-            # 1+1 — только строки без меток Китай/США; eSim/Dual — только с CN/US в опте.
             if not blocked:
                 k11 = DeviceKey(
                     family="iphone",
@@ -527,7 +591,7 @@ def collect_iphone_all_best_byn_from_text(
                     variant=ik.variant,
                     memory=ik.memory,
                     color=ik.color,
-                    sim_variant="1+1",
+                    sim_variant=SIM_VARIANT_SIM_ESIM,
                 )
                 _update_best_price(best_numeric, has_numeric, k11, price_byn)
             else:
@@ -538,7 +602,7 @@ def collect_iphone_all_best_byn_from_text(
                         variant=ik.variant,
                         memory=ik.memory,
                         color=ik.color,
-                        sim_variant="dual",
+                        sim_variant=SIM_VARIANT_DUAL,
                     )
                     _update_best_price(best_numeric, has_numeric, kd, price_byn)
                 elif has_esim:
@@ -548,7 +612,7 @@ def collect_iphone_all_best_byn_from_text(
                         variant=ik.variant,
                         memory=ik.memory,
                         color=ik.color,
-                        sim_variant="eSim",
+                        sim_variant=SIM_VARIANT_ESIM,
                     )
                     _update_best_price(best_numeric, has_numeric, ke, price_byn)
         else:
@@ -577,7 +641,7 @@ def format_iphone_all_to_csv(
                 variant=key.variant,
                 memory=key.memory,
                 color=key.color,
-                sim_variant="1+1",
+                sim_variant=SIM_VARIANT_SIM_ESIM,
             )
             if k11 in has_numeric:
                 pairs.append(
@@ -610,7 +674,7 @@ def format_iphone_all_to_csv(
                 variant=key.variant,
                 memory=key.memory,
                 color=key.color,
-                sim_variant="eSim",
+                sim_variant=SIM_VARIANT_ESIM,
             )
             if ke in has_numeric:
                 pairs.append(
@@ -631,7 +695,7 @@ def format_iphone_all_to_csv(
                 variant=key.variant,
                 memory=key.memory,
                 color=key.color,
-                sim_variant="dual",
+                sim_variant=SIM_VARIANT_DUAL,
             )
             if kd in has_numeric:
                 pairs.append(
@@ -663,7 +727,13 @@ def format_iphone_all_to_csv(
             )
         pairs.append((key, line))
 
-    pairs.sort(key=lambda p: _retail_sort_key(p[0]))
+    pairs.sort(
+        key=lambda p: _retail_sort_key_with_price(
+            p[0],
+            best_numeric=best_numeric,
+            has_numeric=has_numeric,
+        )
+    )
     lines = _inject_retail_separators(pairs)
     rows: list[str] = []
     for L in lines:
@@ -686,7 +756,7 @@ def process_iphone_all_from_text(
     delimiter_out: str = ";",
     include_cn_us_13_16: bool = False,
 ) -> str:
-    best_numeric, has_numeric = collect_iphone_all_best_byn_from_text(
+    best, has_n = collect_iphone_all_best_byn_from_text(
         input_text,
         input_format=input_format,
         base=base,
@@ -695,8 +765,8 @@ def process_iphone_all_from_text(
         include_cn_us_13_16=include_cn_us_13_16,
     )
     return format_iphone_all_to_csv(
-        best_numeric,
-        has_numeric,
+        best,
+        has_n,
         base_order=base_order,
         missing_price_text=missing_price_text,
         delimiter_out=delimiter_out,
@@ -735,9 +805,10 @@ def merge_iphone_all_from_texts(
         include_cn_us_13_16=include_cn_us_13_16,
     )
     merged = merge_min_byn(ba, bb)
+    has_m = set(merged.keys())
     return format_iphone_all_to_csv(
         merged,
-        set(merged.keys()),
+        has_m,
         base_order=base_order,
         missing_price_text=missing_price_text,
         delimiter_out=delimiter_out,
