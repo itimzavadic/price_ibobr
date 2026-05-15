@@ -125,6 +125,8 @@ _re_pro_plain_mc = re.compile(
 
 
 def _parse_ipad_name(name_raw: str, ipad_map: dict[IpadKey, dict]) -> Optional[IpadKey]:
+    if re.search(r"тонкая|thin\b", name_raw, flags=re.IGNORECASE):
+        return None
     s = _strip_noise(name_raw)
     if not s:
         return None

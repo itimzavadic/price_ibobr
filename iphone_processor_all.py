@@ -547,6 +547,9 @@ def collect_iphone_all_best_byn_from_text(
         if base_proc.wholesale_line_skips_all_iphone_row_processing(name_raw):
             continue
 
+        # Пропускаем распакованные / обменные устройства
+        if re.search(r"распак|обменка", name_raw, flags=re.IGNORECASE):
+            continue
         price_usd = base_proc._try_parse_price_usd(price_raw)
         if price_usd is None:
             continue
@@ -596,16 +599,8 @@ def collect_iphone_all_best_byn_from_text(
                 _update_best_price(best_numeric, has_numeric, k11, price_byn)
             else:
                 if has_dual:
-                    kd = DeviceKey(
-                        family="iphone",
-                        year=ik.year,
-                        variant=ik.variant,
-                        memory=ik.memory,
-                        color=ik.color,
-                        sim_variant=SIM_VARIANT_DUAL,
-                    )
-                    _update_best_price(best_numeric, has_numeric, kd, price_byn)
-                elif has_esim:
+                    continue
+                if has_esim:
                     ke = DeviceKey(
                         family="iphone",
                         year=ik.year,
