@@ -3,7 +3,7 @@ from __future__ import annotations
 import csv
 import json
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from decimal import Decimal
 from io import StringIO
 from pathlib import Path
@@ -435,7 +435,9 @@ def _extract_iphone17_key(name_raw: str) -> Optional[DeviceKey]:
 
     # SIM variant
     sim_variant = None
-    if re.search(r"\b2\s*sim\b|\b2sim\b", lowered) or "2sim" in lowered:
+    if base_proc.wholesale_iphone_line_indicates_hk_region(s):
+        sim_variant = SIM_VARIANT_DUAL
+    elif re.search(r"\b2\s*sim\b|\b2sim\b", lowered) or "2sim" in lowered:
         sim_variant = SIM_VARIANT_DUAL
     elif re.search(r"\b1\s*\+\s*1\b|1\+1", lowered):
         sim_variant = SIM_VARIANT_SIM_ESIM
@@ -535,30 +537,36 @@ def collect_iphone_all_best_byn_from_text(
     best_numeric: dict[DeviceKey, int] = {}
     has_numeric: set[DeviceKey] = set()
 
-    if input_format == "csv":
-        rows = _parse_csv_rows(input_text, delimiter=";")
-    else:
-        rows = _parse_text_rows(input_text)
-
-    for name_raw, price_raw in rows:
-        if price_raw is None:
+    for name_raw, price_raw, row_ctx in base_proc._iter_iphone_pricing_rows_from_string(
+        input_text, input_format=input_format
+    ):
+        if not price_raw:
             continue
 
         if base_proc.wholesale_line_skips_all_iphone_row_processing(name_raw):
             continue
 
         # Пропускаем распакованные / обменные устройства
-        if re.search(r"распак|обменка", name_raw, flags=re.IGNORECASE):
+        if re.search(r"распак|обменка", row_ctx, flags=re.IGNORECASE):
             continue
+
         price_usd = base_proc._try_parse_price_usd(price_raw)
         if price_usd is None:
             continue
 
         price_byn = base_proc.compute_final_price_byn(price_usd, markup_usd, usd_to_byn)
 
+        is_hk = base_proc.wholesale_iphone_line_indicates_hk_region(name_raw, price_raw, row_ctx)
+        is_dual_phy = base_proc.wholesale_iphone_line_indicates_dual_physical_sim(name_raw)
+        is_dual_or_hk = is_dual_phy or is_hk
+
         k17 = _extract_iphone17_key(name_raw)
         if k17 is not None:
+            if is_hk and include_cn_us_13_16 and k17.sim_variant != SIM_VARIANT_DUAL:
+                k17 = replace(k17, sim_variant=SIM_VARIANT_DUAL)
             if k17 not in base:
+                continue
+            if not include_cn_us_13_16 and is_hk:
                 continue
             _update_best_price(best_numeric, has_numeric, k17, price_byn)
             continue
@@ -566,6 +574,8 @@ def collect_iphone_all_best_byn_from_text(
         ka = _extract_air_key(name_raw)
         if ka is not None:
             if ka not in base:
+                continue
+            if not include_cn_us_13_16 and is_hk:
                 continue
             _update_best_price(best_numeric, has_numeric, ka, price_byn)
             continue
@@ -583,22 +593,34 @@ def collect_iphone_all_best_byn_from_text(
 
         blocked = base_proc._is_blocked_country_flags(name_raw)
         low = name_raw.lower()
-        has_dual = bool(re.search(r"\bdual\b", low))
         has_esim = bool(re.search(r"e\s*-?\s*sim|\besim\b", low))
 
         if include_cn_us_13_16:
             if not blocked:
-                k11 = DeviceKey(
-                    family="iphone",
-                    year=ik.year,
-                    variant=ik.variant,
-                    memory=ik.memory,
-                    color=ik.color,
-                    sim_variant=SIM_VARIANT_SIM_ESIM,
-                )
-                _update_best_price(best_numeric, has_numeric, k11, price_byn)
+                if is_dual_or_hk:
+                    continue
+                if has_esim:
+                    ke = DeviceKey(
+                        family="iphone",
+                        year=ik.year,
+                        variant=ik.variant,
+                        memory=ik.memory,
+                        color=ik.color,
+                        sim_variant=SIM_VARIANT_ESIM,
+                    )
+                    _update_best_price(best_numeric, has_numeric, ke, price_byn)
+                else:
+                    k11 = DeviceKey(
+                        family="iphone",
+                        year=ik.year,
+                        variant=ik.variant,
+                        memory=ik.memory,
+                        color=ik.color,
+                        sim_variant=SIM_VARIANT_SIM_ESIM,
+                    )
+                    _update_best_price(best_numeric, has_numeric, k11, price_byn)
             else:
-                if has_dual:
+                if is_dual_or_hk:
                     continue
                 if has_esim:
                     ke = DeviceKey(
@@ -612,6 +634,8 @@ def collect_iphone_all_best_byn_from_text(
                     _update_best_price(best_numeric, has_numeric, ke, price_byn)
         else:
             if blocked:
+                continue
+            if is_dual_or_hk:
                 continue
             _update_best_price(best_numeric, has_numeric, core_key, price_byn)
 
@@ -823,12 +847,14 @@ def collect_retail_site_min_by_group(
     """
     best: dict[tuple, tuple[int, DeviceKey]] = {}
 
-    rows = base_proc._iter_input_rows_from_string(input_text, input_format=input_format)
-
-    for name_raw, price_raw in rows:
-        if price_raw is None:
+    for name_raw, price_raw, row_ctx in base_proc._iter_iphone_pricing_rows_from_string(
+        input_text, input_format=input_format
+    ):
+        if not price_raw:
             continue
         if base_proc.wholesale_line_skips_all_iphone_row_processing(name_raw):
+            continue
+        if base_proc.wholesale_iphone_line_indicates_hk_region(name_raw, price_raw, row_ctx):
             continue
         price_byn = base_proc._try_parse_price_byn(price_raw)
         if price_byn is None:

@@ -157,6 +157,11 @@ def _parse_section_header(line: str) -> Optional[_SectionCtx]:
         chip = _chip_from_groups(chip_b, pro_s)
         spec = _build_spec(ra, st)
         return _SectionCtx(fam, inch, year, chip, spec)
+    m = _RE_SEC_NEO_V2.match(s)
+    if m:
+        ra, st = m.groups()
+        spec = _build_spec(ra, st)
+        return _SectionCtx("Neo", "", None, None, spec)
     m = _RE_SEC_NEO.match(s)
     if m:
         y, chip_b, pro_s, ra, st = m.groups()
@@ -164,11 +169,6 @@ def _parse_section_header(line: str) -> Optional[_SectionCtx]:
         chip = _chip_from_groups(chip_b, pro_s)
         spec = _build_spec(ra, st)
         return _SectionCtx("Neo", "", year, chip, spec)
-    m = _RE_SEC_NEO_V2.match(s)
-    if m:
-        ra, st = m.groups()
-        spec = _build_spec(ra, st)
-        return _SectionCtx("Neo", "", None, None, spec)
     return None
 
 
